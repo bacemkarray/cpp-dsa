@@ -64,9 +64,9 @@ template <typename E>
 ArrayList<E>& ArrayList<E>::operator=(const ArrayList<E>& other) {
     if(this == &other) return *this;
 
+    delete[] Array;
     capacity = other.capacity;
     size = other.size;
-    delete[] Array;
     Array = new E[capacity];
 
     for(int i=0; i<size; i++) {
@@ -85,15 +85,19 @@ int ArrayList<E>::getSize() {
 
 template <typename E>
 bool ArrayList<E>::isEmpty() {
-    return size == 0 ? true : false;
+    return size == 0;
 }
 
 
 template <typename E>
 void ArrayList<E>::add(int index, const E& element) {
+    if(index < 0 || index > size) {
+        throw out_of_range("Index out of bounds");
+    }
+    
     if(size == capacity) {
-        int new_capacity = capacity*2;
-        E* Temp = new E[new_capacity];
+        capacity *= 2;
+        E* Temp = new E[capacity];
 
         for(int j=0; j<size; j++) {
             Temp[j] = Array[j]; 
@@ -114,12 +118,19 @@ void ArrayList<E>::add(int index, const E& element) {
 
 template <typename E>
 E ArrayList<E>::get(int index) {
+    if(index < 0 || index >= size) {
+        throw out_of_range("Index out of bounds");
+    }
     return Array[index];
 }
 
 
 template <typename E>
 E ArrayList<E>::remove(int index) {
+    if(index < 0 || index >= size) {
+        throw out_of_range("Index out of bounds");
+    }
+    
     E temp = Array[index];
 
     if(index == size-1) {
@@ -127,8 +138,8 @@ E ArrayList<E>::remove(int index) {
         return temp;
     }
 
-    for(int j=index+1; j<size; j++) {
-        Array[j] = Array[j-1];
+    for(int j=index; j<size-1; j++) {
+        Array[j] = Array[j+1];
     }
     size--;
 
@@ -138,21 +149,27 @@ E ArrayList<E>::remove(int index) {
 
 template <typename E>
 E ArrayList<E>::set(int index, const E& element) {
+    if(index < 0 || index >= size) {
+        throw out_of_range("Index out of bounds");
+    }
+
+    E old = Array[index];
     Array[index] = element;
+    
+    return old;
 }
 
 
 template <typename E>
 void ArrayList<E>::printList() {
-	cout << "List size is: " << size << endl;
-	cout << "Array capacity is: " << capacity << endl;
-
-	if(size == 0) return;
-
-	cout << "{";
-	for(int i = 0; i < size; i++)
-		cout << " " << Array[i] << " ";
-	cout << "}" << endl;
+    cout << "Size of List: " << size << endl;
+    cout << "Capacity of List: " << capacity << endl;
+    
+    cout << "{";
+    for (int i=0; i<size; i++) {
+        cout << " " << Array[i] << " "; 
+    }
+    cout << "}" << endl;
 }
 
 #endif
